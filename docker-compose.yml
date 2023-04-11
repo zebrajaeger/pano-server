@@ -1,6 +1,7 @@
 version: "3"
 services:
   app:
+    container_name: pano-server
     build: .
     ports:
       - "3012:3000" # Bind the container's port 3000 to the host's port 3012
