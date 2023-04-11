@@ -7,6 +7,7 @@ const handlebars = require('handlebars');
 const publicPath = path.join(__dirname, 'public');
 const defaultFile = 'index.html'
 const serverUrl = process.env.SERVER_URL || 'http://localhost:3000';
+const templateExtension = '.template.html'
 // -----
 
 const app = express();
@@ -21,7 +22,7 @@ app.use((req, res, next) => {
 
 app.get('*.html', (req, res, next) => {
   const originalPath = req.path;
-  const panoPath = originalPath.replace(/\.html$/, '.pano.html');
+  const panoPath = originalPath.replace(/\.html$/, templateExtension);
   const filePath = path.join(publicPath, panoPath);
   const currentPath = path.dirname(originalPath);
 
