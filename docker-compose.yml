@@ -5,5 +5,5 @@ services:
     ports:
       - "3012:3000" # Bind the container's port 3000 to the host's port 3012
     volumes:
-      - /var/pano-root:/app/public
+      - /var/pano:/app/public
     restart: always
