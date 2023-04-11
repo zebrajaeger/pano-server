@@ -1,0 +1,9 @@
+version: "3"
+services:
+  app:
+    build: .
+    ports:
+      - "3012:3000" # Bind the container's port 3000 to the host's port 3012
+    volumes:
+      - /var/pano-root:/app/public
+    restart: always
