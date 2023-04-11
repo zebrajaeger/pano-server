@@ -1,5 +1,11 @@
 # Pano Server
 
-## Build docker container
+## start with
 
-    docker build -t pano-server:0.0.1 .
+Modify the '/var/pano-root' - path within the
+
+    docker-compose.yml
+
+file to your pano root directory. Then start the container with:
+
+    docker-compose up -d
