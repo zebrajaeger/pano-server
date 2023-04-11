@@ -1,11 +1,15 @@
-const express = require('express');
 const path = require('path');
+const fs = require('fs');
+const express = require('express');
+const handlebars = require('handlebars');
 
-const app = express();
-
+// -----
 const publicPath = path.join(__dirname, 'public');
 const defaultFile = 'index.html'
+const serverUrl = process.env.SERVER_URL || 'http://localhost:3000';
+// -----
 
+const app = express();
 app.use((req, res, next) => {
   if (req.path.endsWith('/') || req.path.endsWith('\\')) {
     let newPath = path.posix.join(req.path, defaultFile);
@@ -18,12 +22,20 @@ app.use((req, res, next) => {
 app.get('*.html', (req, res, next) => {
   const originalPath = req.path;
   const panoPath = originalPath.replace(/\.html$/, '.pano.html');
-  const fullPath = path.join(publicPath, panoPath);
-  res.sendFile(fullPath, err => {
-    if (err) {
-      next();
-    }
-  });
+  const filePath = path.join(publicPath, panoPath);
+  const currentPath = path.dirname(originalPath);
+
+  if (fs.existsSync(filePath)) {
+    let content = fs.readFileSync(filePath, 'utf8');
+
+    const template = handlebars.compile(content);
+    const rendered = template({serverUrl, currentPath, originalPath, panoPath});
+    res.send(rendered);
+
+    res.send(content);
+  } else {
+    next();
+  }
 });
 
 app.use(express.static(publicPath));
@@ -33,5 +45,6 @@ app.use((req, res) => {
 });
 
 app.listen(3000, () => {
-  console.log('Server started on port 3000');
+  console.log(
+      `Server running at http://localhost:3000/; reachable @ ${serverUrl}`);
 });
