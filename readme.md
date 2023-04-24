@@ -1,15 +1,25 @@
 # Pano Server
 
-## start with
+## Setup
 
-Modify the '/var/pano-root' - path within the
+### Clone end configure
+    git clone git@github.com:zebrajaeger/pano-server.git
+    cd pano-server
 
-    docker-compose.yml
+create and edit the file `server.env`:
 
-file to your pano root directory. Then start the container with:
+    nano server.env
+
+with content like this:
+
+    SERVER_URL=https://my.pano.server.org
+
+
+### Build and start
+
 
     docker-compose up --build -d
 
-Or pull and rebuild/start:
+### Update, rebuild and start
 
      git pull && docker-compose up --build -d

@@ -7,6 +7,6 @@ services:
       - "3012:3000" # Bind the container's port 3000 to the host's port 3012
     volumes:
       - /var/pano:/app/public
-    environment:
-        - SERVER_URL=https://pano.zebrajaeger.de
+    env_file:
+      - server.env
     restart: always
