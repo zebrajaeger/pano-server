@@ -9,3 +9,7 @@ Modify the '/var/pano-root' - path within the
 file to your pano root directory. Then start the container with:
 
     docker-compose up --build -d
+
+Or pull and rebuild/start:
+
+     git pull && docker-compose up --build -d

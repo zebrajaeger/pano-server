@@ -32,7 +32,8 @@ app.get('*.html', (req, res, next) => {
 
     const template = handlebars.compile(content);
     const rendered = template({
-      serverUrl: url, url,
+      serverUrl,
+      url,
       currentPath,
       originalPath,
       panoPath
