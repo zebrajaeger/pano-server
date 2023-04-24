@@ -25,12 +25,18 @@ app.get('*.html', (req, res, next) => {
   const panoPath = originalPath.replace(/\.html$/, templateExtension);
   const filePath = path.join(publicPath, panoPath);
   const currentPath = path.dirname(originalPath);
+  const url = serverUrl + originalPath;
 
   if (fs.existsSync(filePath)) {
     let content = fs.readFileSync(filePath, 'utf8');
 
     const template = handlebars.compile(content);
-    const rendered = template({serverUrl, currentPath, originalPath, panoPath});
+    const rendered = template({
+      serverUrl: url, url,
+      currentPath,
+      originalPath,
+      panoPath
+    });
     res.send(rendered);
 
     res.send(content);
