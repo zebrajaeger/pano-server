@@ -37,19 +37,44 @@ app.use((req, res, next) => {
   if (req.path.endsWith('/') || req.path.endsWith('\\')) {
     debug('  - without file')
 
-    if (!renderTemplates(req.path, res)) {
-      next();
-    }
-  } else if (path.basename(req.path) === 'index.html') {
-    debug('  - with index.html')
-
-    if (!renderTemplates(path.dirname(req.path), res)) {
-      next();
+    if (renderTemplates(req.path, res)) {
+      return;
     }
   } else {
-    next();
+    const name = path.basename(req.path);
+
+    // double test for faster image delivery
+    if(name.startsWith('index.')) {
+      if (name === 'index.html') {
+        debug('  - with index.html')
+
+        if (renderTemplates(path.dirname(req.path), res)) {
+          return;
+        }
+      }
+
+      if (name === 'index.p.html') {
+        debug('  - with index.p.html')
+
+        if (renderTemplate(path.dirname(req.path), 'index.template.p.html',
+            res)) {
+          return;
+        }
+      }
+
+      if (name === 'index.m.html') {
+        debug('  - with index.p.html')
+
+        if (renderTemplate(path.dirname(req.path), 'index.template.m.html',
+            res)) {
+          return;
+        }
+      }
+    }
   }
-});
+  next();
+})
+;
 
 function renderTemplates(reqPath, res) {
   debug('renderTemplates', reqPath)
