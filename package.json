@@ -1,11 +1,17 @@
 {
   "name": "pano-server",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "main": "index.js",
   "scripts": {
     "develop": "nodemon index.js",
+    "debug": "nodemon index.js",
     "start": "node index.js"
+  },
+  "nodemonConfig": {
+    "env": {
+      "DEBUG": "true"
+    }
   },
   "keywords": [],
   "author": "",
