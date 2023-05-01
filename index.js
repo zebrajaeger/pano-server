@@ -45,7 +45,7 @@ app.use((req, res, next) => {
   if (req.path.endsWith('/') || req.path.endsWith('\\')) {
     debug('  - without file')
 
-    if (renderTemplates(req.path, res)) {
+    if (renderTemplates(req.path.slice(0,-1), res)) {
       return;
     }
   } else {
