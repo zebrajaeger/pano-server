@@ -44,7 +44,9 @@ app.use((req, res, next) => {
     const name = path.basename(req.path);
 
     // double test for faster image delivery
-    if(name.startsWith('index.')) {
+    if (name.startsWith('index.')) {
+      debug('  - with index.')
+
       if (name === 'index.html') {
         debug('  - with index.html')
 
@@ -53,7 +55,7 @@ app.use((req, res, next) => {
         }
       }
 
-      if (name === 'index.p.html') {
+      if (name === 'index.p.html' || name === 'index.template.p.html') {
         debug('  - with index.p.html')
 
         if (renderTemplate(path.dirname(req.path), 'index.template.p.html',
@@ -62,10 +64,19 @@ app.use((req, res, next) => {
         }
       }
 
-      if (name === 'index.m.html') {
-        debug('  - with index.p.html')
+      if (name === 'index.m.html' || name === 'index.template.m.html') {
+        debug('  - with index.m.html')
 
         if (renderTemplate(path.dirname(req.path), 'index.template.m.html',
+            res)) {
+          return;
+        }
+      }
+
+      if (name === 'index.template.html') {
+        debug('  - with index.template.html')
+
+        if (renderTemplate(path.dirname(req.path), 'index.template.html',
             res)) {
           return;
         }
@@ -74,7 +85,6 @@ app.use((req, res, next) => {
   }
   next();
 })
-;
 
 function renderTemplates(reqPath, res) {
   debug('renderTemplates', reqPath)
@@ -82,7 +92,6 @@ function renderTemplates(reqPath, res) {
   return renderTemplate(reqPath, 'index.template.p.html', res)
       || renderTemplate(reqPath, 'index.template.m.html', res)
       || renderTemplate(reqPath, 'index.template.html', res)
-      || renderTemplate(reqPath, 'index.html', res)
 }
 
 function renderTemplate(reqPath, templateFileName, res) {
