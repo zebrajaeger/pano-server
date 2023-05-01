@@ -1,30 +1,25 @@
+'use strict'
+const {parentPort} = require('node:worker_threads')
 const path = require('path');
 const fs = require('fs');
 const express = require('express');
 const handlebars = require('handlebars');
-
-const INDEX_PREFIX = 'index.';
-const INDEX_HTML = 'index.html';
-const INDEX_TEMPLATE_HTML = 'index.template.html';
-const INDEX_M_HTML = 'index.m.html';
-const INDEX_M_TEMPLATE_HTML = 'index.m.template.html';
-const INDEX_P_HTML = 'index.p.html';
-const INDEX_P_TEMPLATE_HTML = 'index.p.template.html';
+const {
+  INDEX_PREFIX,
+  INDEX_HTML,
+  INDEX_TEMPLATE_HTML,
+  INDEX_M_HTML,
+  INDEX_M_TEMPLATE_HTML,
+  INDEX_P_HTML,
+  INDEX_P_TEMPLATE_HTML,
+  isDebug, debug
+} = require('./constants')
 
 // -----
-const publicPath = path.join(__dirname, 'public');
+const publicPath = path.join(path.dirname(__dirname), 'public');
 const port = parseInt(process.env.SERVER_PORT) || 3000;
 const serverUrl = process.env.SERVER_URL || 'http://localhost:3000';
-const isDebug = process.env.DEBUG || false;
 // -----
-
-const app = express();
-
-function debug(message, ...optionalParams) {
-  if (isDebug) {
-    console.log.apply(null, arguments);
-  }
-}
 
 console.log('---------');
 debug('Debug is enabled')
@@ -32,6 +27,36 @@ console.log('serverUrl is ', serverUrl)
 console.log('port is ', port)
 console.log('publicPath is ', publicPath)
 console.log('---------');
+
+let panos = [];
+parentPort.on('message', msg => {
+  panos = msg
+  debug('panos', panos)
+});
+
+const app = express();
+app.use((req, res, next) => {
+  if (req.path === '/') {
+    res.redirect('/index.html')
+  } else {
+    next()
+  }
+})
+
+app.use((req, res, next) => {
+  if (req.path === '/index.html') {
+    const a = '<html lang="en"><head><title="toc"></title></head><body><ul>'
+    const b = '</ul></body></html>';
+    const links = [];
+    for (const pano of panos) {
+      links.push(`<li><a href="${pano}">${pano}<a></li>`)
+    }
+    const html = a + links.join('') + b;
+    res.send(html);
+  } else {
+    next();
+  }
+});
 
 // if path = ('<dir>/' || '<dir>/index.html')
 //  -> '<dir>/index.template.p.html'
@@ -42,10 +67,10 @@ console.log('---------');
 app.use((req, res, next) => {
   debug('REQUEST', req.path)
 
-  if (req.path.endsWith('/') || req.path.endsWith('\\')) {
+  if (req.path.endsWith('/')) {
     debug('  - without file')
 
-    if (renderTemplates(req.path.slice(0,-1), res)) {
+    if (renderTemplates(req.path.slice(0, -1), res)) {
       return;
     }
   } else {
