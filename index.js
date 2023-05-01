@@ -3,6 +3,14 @@ const fs = require('fs');
 const express = require('express');
 const handlebars = require('handlebars');
 
+const INDEX_PREFIX = 'index.';
+const INDEX_HTML = 'index.html';
+const INDEX_TEMPLATE_HTML = 'index.template.html';
+const INDEX_M_HTML = 'index.m.html';
+const INDEX_M_TEMPLATE_HTML = 'index.m.template.html';
+const INDEX_P_HTML = 'index.p.html';
+const INDEX_P_TEMPLATE_HTML = 'index.p.template.html';
+
 // -----
 const publicPath = path.join(__dirname, 'public');
 const port = parseInt(process.env.SERVER_PORT) || 3000;
@@ -44,10 +52,10 @@ app.use((req, res, next) => {
     const name = path.basename(req.path);
 
     // double test for faster image delivery
-    if (name.startsWith('index.')) {
+    if (name.startsWith(INDEX_PREFIX)) {
       debug('  - with index.')
 
-      if (name === 'index.html') {
+      if (name === INDEX_HTML) {
         debug('  - with index.html')
 
         if (renderTemplates(path.dirname(req.path), res)) {
@@ -55,28 +63,28 @@ app.use((req, res, next) => {
         }
       }
 
-      if (name === 'index.p.html' || name === 'index.template.p.html') {
+      if (name === INDEX_P_HTML || name === INDEX_P_TEMPLATE_HTML) {
         debug('  - with index.p.html')
 
-        if (renderTemplate(path.dirname(req.path), 'index.template.p.html',
+        if (renderTemplate(path.dirname(req.path), INDEX_P_TEMPLATE_HTML,
             res)) {
           return;
         }
       }
 
-      if (name === 'index.m.html' || name === 'index.template.m.html') {
+      if (name === INDEX_M_HTML || name === INDEX_M_TEMPLATE_HTML) {
         debug('  - with index.m.html')
 
-        if (renderTemplate(path.dirname(req.path), 'index.template.m.html',
+        if (renderTemplate(path.dirname(req.path), INDEX_M_TEMPLATE_HTML,
             res)) {
           return;
         }
       }
 
-      if (name === 'index.template.html') {
+      if (name === INDEX_TEMPLATE_HTML) {
         debug('  - with index.template.html')
 
-        if (renderTemplate(path.dirname(req.path), 'index.template.html',
+        if (renderTemplate(path.dirname(req.path), INDEX_TEMPLATE_HTML,
             res)) {
           return;
         }
@@ -89,9 +97,9 @@ app.use((req, res, next) => {
 function renderTemplates(reqPath, res) {
   debug('renderTemplates', reqPath)
 
-  return renderTemplate(reqPath, 'index.template.p.html', res)
-      || renderTemplate(reqPath, 'index.template.m.html', res)
-      || renderTemplate(reqPath, 'index.template.html', res)
+  return renderTemplate(reqPath, INDEX_P_TEMPLATE_HTML, res)
+      || renderTemplate(reqPath, INDEX_M_TEMPLATE_HTML, res)
+      || renderTemplate(reqPath, INDEX_TEMPLATE_HTML, res)
 }
 
 function renderTemplate(reqPath, templateFileName, res) {
@@ -111,7 +119,7 @@ function renderTemplate(reqPath, templateFileName, res) {
   const template = handlebars.compile(content);
   const context = {
     serverUrl,
-    url: path.join(serverUrl, reqPath, 'index.html'),
+    url: path.join(serverUrl, reqPath, INDEX_HTML),
     currentPath: reqPath,
   };
 
