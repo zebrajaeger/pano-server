@@ -6,3 +6,4 @@ const indexer = new Worker(path.join(__dirname, 'indexer_thread.js'), {});
 indexer.on('message', (msg) => {
   server.postMessage(msg);
 });
+

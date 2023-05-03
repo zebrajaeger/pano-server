@@ -45,18 +45,37 @@ app.use((req, res, next) => {
 
 app.use((req, res, next) => {
   if (req.path === '/index.html') {
-    const a = '<html lang="en"><head><title="toc"></title></head><body><ul>'
-    const b = '</ul></body></html>';
     const links = [];
     for (const pano of panos) {
-      links.push(`<li><a href="${pano}">${pano}<a></li>`)
+      links.push(`
+        <div class="item">
+          <a href="/${pano.link}">
+            <div class="link-content">
+              <div class="pano-title">${pano.title}</div>
+              <img class="preview-image" src="/${pano.scaledPreviewLink150}" alt="${pano.alt}">
+            </div>
+          <a>
+        </div>
+        `)
     }
-    const html = a + links.join('') + b;
+
+    const html = `
+    <html lang="en">
+      <head>
+        <title>PanoServer</title>
+        <link rel="stylesheet" href="/style.css">
+      </head>
+      <body>
+        <div class="root">
+        ${links.join('')}
+        </div>
+      </body> 
+    </html>`;
     res.send(html);
   } else {
     next();
   }
-});
+})
 
 // if path = ('<dir>/' || '<dir>/index.html')
 //  -> '<dir>/index.template.p.html'
@@ -160,6 +179,9 @@ function renderTemplate(reqPath, templateFileName, res) {
 
 // all static file fom public directory
 app.use(express.static(publicPath));
+
+// assets
+app.use(express.static(path.resolve(__dirname, '../assets')));
 
 // not found -> 404
 app.use((req, res) => {
