@@ -3,7 +3,7 @@ const {parentPort} = require('worker_threads');
 const fs = require('fs');
 const path = require('path');
 const {parse} = require('node-html-parser');
-const sharp = require('sharp');
+const Jimp = require('jimp');
 
 const {
   INDEX_ALL, debug, INDEX_P_HTML, INDEX_P_TEMPLATE_HTML,
@@ -32,15 +32,16 @@ function downscale(imageFilePath, height) {
 
   if (!fs.existsSync(outputFile)) {
     debug('DOWNSCALE', imageFilePath, outputFile)
-    sharp(imageFilePath)
-    .resize({height, width: height * 2, fit: sharp.fit.contain,})
-    .jpeg({quality: 80})
-    .toFile(outputFile)
-    .then(function (newFileInfo) {
-      debug("Image scaled", newFileInfo)
-    })
-    .catch(function (err) {
-      console.error("Image scaler error occurred", err);
+    Jimp.read(imageFilePath, (err, img) => {
+      if (err) {
+        console.error("Image scaler error occurred", err);
+      } else {
+        img
+        .scaleToFit(height + height, height)
+        .quality(90)
+        .write(outputFile);
+        debug("Image scaled", imageFilePath, outputFile)
+      }
     });
   }
 

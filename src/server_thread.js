@@ -52,6 +52,7 @@ app.use((req, res, next) => {
           <a href="/${pano.link}">
             <div class="link-content">
               <div class="pano-title">${pano.title}</div>
+              <div class="pano-title">${pano.link}</div>
               <img class="preview-image" src="/${pano.scaledPreviewLink150}" alt="${pano.alt}">
             </div>
           <a>
