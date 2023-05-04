@@ -64,6 +64,7 @@ app.use((req, res, next) => {
     <html lang="en">
       <head>
         <title>PanoServer</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="stylesheet" href="/style.css">
       </head>
       <body>

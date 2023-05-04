@@ -5,8 +5,9 @@
   "main": "src/index.js",
   "scripts": {
     "develop": "nodemon src/index.js",
-    "debug": "nodemon src/index.js",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "fe:develop": "gulp --gulpfile fe-build/gulpfile.js develop",
+    "fe:build": "gulp --gulpfile fe-build/gulpfile.js build"
   },
   "nodemonConfig": {
     "env": {
@@ -23,6 +24,17 @@
     "node-html-parser": "6.1.5"
   },
   "devDependencies": {
+    "autoprefixer": "^10.4.14",
+    "browser-sync": "^2.29.1",
+    "gulp": "^4.0.2",
+    "gulp-clean": "^0.4.0",
+    "gulp-dart-sass": "^1.1.0",
+    "gulp-notify": "^4.0.0",
+    "gulp-plumber": "^1.2.1",
+    "gulp-postcss": "^9.0.1",
+    "gulp-sourcemaps": "^3.0.0",
+    "gulplog": "^2.0.1",
+    "node-notifier": "^10.0.1",
     "nodemon": "2.0.22"
   }
 }

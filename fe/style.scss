@@ -1,8 +1,19 @@
+
 @font-face {
   font-family: "Roboto";
-  src: url("/fonts/Roboto-Regular.ttf") format('truetype');
+  src: url("/fe/assets/fonts/Roboto-Regular.ttf") format('truetype');
   font-weight: 400;
   font-style: normal;
+}
+
+
+@for $i from 0 to 15 {
+  @media (min-width: #{($i) * 321}px) and (max-width: #{(($i+1) * 321)-1}px){
+    .root{
+      z-index: $i;
+      width: #{$i * 321}px
+    }
+  }
 }
 
 * {
@@ -15,15 +26,14 @@ body {
   font-family: "Roboto", serif;
   font-weight: 400;
   font-style: normal;
-
-  background-color: #ddd;
 }
 
 .root {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: space-around;
+  justify-content: left;
+  margin: auto;
 }
 
 .item {
@@ -36,6 +46,7 @@ body {
 
   box-shadow: 8px 7px 6px -5px rgba(0, 0, 0, 0.48);
 }
+
 
 .item a {
   color: black;

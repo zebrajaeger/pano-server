@@ -3,3 +3,6 @@ node_modules
 public
 *.log
 server.env
+dist
+assets
+!assets/.gitkeep
