@@ -1,7 +1,7 @@
 FROM node:18-alpine3.16
 WORKDIR /app
-RUN npm install
 COPY package*.json ./
+RUN npm install
 COPY src/ ./src
 COPY fe-build/ ./fe-build
 COPY fe/ ./fe
