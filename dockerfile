@@ -6,6 +6,6 @@ COPY src/ ./src
 COPY fe-build/ ./fe-build
 COPY fe/ ./fe
 COPY assets/ ./assets
-RUN npm run build
+RUN npm run fe:build
 EXPOSE 3000
 CMD ["npm", "start"]
