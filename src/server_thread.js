@@ -15,12 +15,17 @@ const {
   isDebug, debug
 } = require('./constants')
 
+const packageJson = require('../package.json');
+const serverVersion = packageJson.version || '';
+
 // -----
 const publicPath = path.join(path.dirname(__dirname), 'public');
 const port = parseInt(process.env.SERVER_PORT) || 3000;
 const serverUrl = process.env.SERVER_URL || 'http://localhost:3000';
 // -----
 
+console.log('---------');
+console.log(`PanoServer v${serverVersion}`);
 console.log('---------');
 debug('Debug is enabled')
 console.log('serverUrl is ', serverUrl)
@@ -69,6 +74,11 @@ app.use((req, res, next) => {
         <link rel="stylesheet" href="/style.css">
       </head>
       <body>
+        <div id="navbar">
+          <div class="navbar-item navbar-title" >Panoserver v${serverVersion}</div>
+          <a class="navbar-item" href="/impressum">Impressum</a>
+        </div>
+
         <div class="root">
         ${links.join('')}
         </div>
