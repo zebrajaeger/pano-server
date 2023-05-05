@@ -76,7 +76,7 @@ app.use((req, res, next) => {
       <body>
         <div id="navbar">
           <div class="navbar-item navbar-title" >Panoserver v${serverVersion}</div>
-          <a class="navbar-item" href="/impressum">Impressum</a>
+          <a class="navbar-item" href="/impressum.html">Impressum</a>
         </div>
 
         <div class="root">
