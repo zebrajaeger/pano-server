@@ -1,8 +1,8 @@
-.idea
-node_modules
-public
+/.idea
+/node_modules
+/public
 *.log
 server.env
-dist
-assets
-!assets/.gitkeep
+/dist
+/assets
+!/assets/.gitkeep
