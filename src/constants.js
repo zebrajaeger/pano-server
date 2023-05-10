@@ -13,14 +13,6 @@ const INDEX_ALL = [
   INDEX_P_HTML,
   INDEX_P_TEMPLATE_HTML];
 
-const isDebug = process.env.DEBUG || false;
-function debug(message, ...optionalParams) {
-  if (isDebug) {
-    console.log.apply(null, arguments);
-  }
-}
-
-
 module.exports = {
   INDEX_PREFIX,
   INDEX_HTML,
@@ -29,6 +21,5 @@ module.exports = {
   INDEX_M_TEMPLATE_HTML,
   INDEX_P_HTML,
   INDEX_P_TEMPLATE_HTML,
-  INDEX_ALL,
-  isDebug, debug
+  INDEX_ALL
 }

@@ -11,10 +11,10 @@ const {
   INDEX_M_HTML,
   INDEX_M_TEMPLATE_HTML,
   INDEX_P_HTML,
-  INDEX_P_TEMPLATE_HTML,
-  isDebug, debug
+  INDEX_P_TEMPLATE_HTML
 } = require('./constants')
-
+const {isDebug, debug} = require('./debug')
+const Tags = require('./tags')
 const packageJson = require('../package.json');
 const serverVersion = packageJson.version || '';
 
@@ -33,10 +33,13 @@ console.log('port is ', port)
 console.log('publicPath is ', publicPath)
 console.log('---------');
 
-let panos = [];
+let panoData = [];
+let tags = new Tags([])
 parentPort.on('message', msg => {
-  panos = msg
-  debug('panos', panos)
+  panoData = msg
+  tags = new Tags(msg.tags)
+  debug('panoItems', panoData.panoItems)
+  debug(tags.byCountDesc)
 });
 
 const app = express();
@@ -51,7 +54,7 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
   if (req.path === '/index.html') {
     const links = [];
-    for (const pano of panos) {
+    for (const pano of panoData.panoItems) {
       links.push(`
         <div class="item">
           <a href="/${pano.link}">
