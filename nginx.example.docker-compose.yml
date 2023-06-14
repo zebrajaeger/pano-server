@@ -1,0 +1,23 @@
+version: "3"
+services:
+  app:
+    container_name: pano-server
+    build: .
+    expose:
+      - "3000:3000"
+    volumes:
+      - /home/me/pano:/app/public
+    env_file:
+      - server.env
+    restart: always
+    environment:
+      - VIRTUAL_HOST=my.domain.org
+      - VIRTUAL_PORT=3000
+      - LETSENCRYPT_HOST=my.domain.org
+      - LETSENCRYPT_EMAIL=my@email.org
+    networks:
+      - reverse-proxy
+
+networks:
+  reverse-proxy:
+    external: true
