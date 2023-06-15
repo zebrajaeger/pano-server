@@ -177,10 +177,14 @@ function renderTemplate(reqPath, templateFileName, res) {
   let content = fs.readFileSync(templateFilePath, 'utf8');
 
   const template = handlebars.compile(content);
+  // noinspection HtmlUnknownTarget
   const context = {
     serverUrl,
     url: path.join(serverUrl, reqPath, INDEX_HTML),
     currentPath: reqPath,
+    html:{
+      head: '<link rel="icon" type="image/png" href="/icon.png">'
+    }
   };
 
   if (isDebug) {
