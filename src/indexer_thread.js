@@ -173,6 +173,13 @@ function scanPanoDir(dir) {
   return null;
 }
 
+/**
+ * Goes recursive into the directory structure and tries to find the folders that contains a pano
+ * and reads the information from each pano
+ *
+ * @param dir
+ * @returns {{preview: *, alt, link: string, description: never, title: never, tags: []}[]|*[]}
+ */
 function scanDir(dir) {
   debug('scanDir', dir)
   const fileNames = fs.readdirSync(dir);
