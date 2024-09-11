@@ -5,7 +5,9 @@
   "main": "src/index.js",
   "scripts": {
     "develop": "nodemon src/index.js",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "fe:develop": "gulp --gulpfile fe-build/gulpfile.js develop",
+    "fe:build": "gulp --gulpfile fe-build/gulpfile.js build"
   },
   "nodemonConfig": {
     "env": {
