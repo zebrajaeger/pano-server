@@ -19,7 +19,8 @@ const packageJson = require('../package.json');
 const serverVersion = packageJson.version || '';
 
 // -----
-const publicPath = path.join(path.dirname(__dirname), 'public');
+const publicPath = path.join(path.dirname(__dirname), 'public'); // read only
+const cachePath = path.join(path.dirname(__dirname), 'cache');  // read/write access required
 const port = parseInt(process.env.SERVER_PORT) || 3000;
 const serverUrl = process.env.SERVER_URL || 'http://localhost:3000';
 // -----
@@ -43,6 +44,8 @@ parentPort.on('message', msg => {
 });
 
 const app = express();
+
+// redirect '/' to '/index.html'
 app.use((req, res, next) => {
   if (req.path === '/') {
     res.redirect('/index.html')
@@ -51,6 +54,7 @@ app.use((req, res, next) => {
   }
 })
 
+// if '/index.html'? Render pano overview
 app.use((req, res, next) => {
   if (req.path === '/index.html') {
     const links = [];
@@ -199,6 +203,9 @@ function renderTemplate(reqPath, templateFileName, res) {
 
 // all static file fom public directory
 app.use(express.static(publicPath));
+
+// all static file fom cache directory
+app.use(express.static(cachePath));
 
 // assets
 app.use(express.static(path.resolve(__dirname, '../assets')));

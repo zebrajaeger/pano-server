@@ -6,6 +6,12 @@ function debug(message, ...optionalParams) {
   }
 }
 
+function error(message, ...optionalParams) {
+  if (isDebug) {
+    console.error.apply(null, arguments);
+  }
+}
+
 module.exports = {
-  isDebug, debug
+  isDebug, debug, error
 }

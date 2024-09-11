@@ -1,22 +1,38 @@
 'use strict';
-const {parentPort} = require('worker_threads');
+const { parentPort } = require('worker_threads');
 const fs = require('fs');
 const path = require('path');
-const {parse} = require('node-html-parser');
+const { parse } = require('node-html-parser');
 const Jimp = require('jimp');
 
 const {
   INDEX_ALL, INDEX_P_HTML, INDEX_P_TEMPLATE_HTML,
   INDEX_M_TEMPLATE_HTML, INDEX_M_HTML
 } = require("./constants");
-const {debug} = require('./debug')
-const publicPath = path.posix.join(path.dirname(__dirname), 'public');
+const { debug, error } = require('./debug')
+const publicPath = path.posix.join(path.dirname(__dirname), 'public'); // read only
+const cachePath = path.posix.join(path.dirname(__dirname), 'cache'); // read/write access required
 
 const INTERVAL = 60000; // 1min
 
 setTimeout(index, 0);
 
 function index() {
+  let canStart = true;  
+  if (!fs.existsSync(publicPath)) {
+    error("public directory does not exist", publicPath);
+    canStart = false;
+  }
+  
+  if (!fs.existsSync(cachePath)) {
+    error("cache directory does not exist", cachePath);
+    canStart = false;
+  }
+
+  if(!canStart){
+    return;
+  }
+
   const panoItems = scanDir(publicPath);
   const tagList = collectTags(panoItems);
 
@@ -43,37 +59,42 @@ function collectTags(panoItems) {
 
   const list = [];
   for (const [key, value] of Object.entries(map)) {
-    list.push({name: key, count: value});
+    list.push({ name: key, count: value });
   }
 
   return list;
 }
 
+/**
+ * Create scaled imagge in cache directory
+ * @param {*} imageFilePath  source image
+ * @param {*} height  max size of width or height
+ * @returns relative scaled image path
+ */
 function downscale(imageFilePath, height) {
 
-  const panoServerPath = path.posix.join(path.dirname(imageFilePath),
-      '.panoserver');
-  fs.mkdirSync(panoServerPath, {recursive: true})
-
   const name = path.basename(imageFilePath) + '.' + height + '.jpg'; // name of scaled image
-  const outputFile = path.resolve(panoServerPath, name);
+  const relPath = path.relative(publicPath, imageFilePath);
+  const dirname = path.dirname( path.resolve(cachePath, relPath));
+  const outputFile = path.resolve(dirname, name);
 
   if (!fs.existsSync(outputFile)) {
+    fs.mkdirSync(dirname, { recursive: true })
     debug('DOWNSCALE', imageFilePath, outputFile)
     Jimp.read(imageFilePath, (err, img) => {
       if (err) {
         console.error("Image scaler error occurred", err);
       } else {
         img
-        .scaleToFit(height + height, height)
-        .quality(90)
-        .write(outputFile);
+          .scaleToFit(height + height, height)
+          .quality(90)
+          .write(outputFile);
         debug("Image scaled", imageFilePath, outputFile)
       }
     });
   }
 
-  return path.posix.join('.panoserver', name);
+  return  name;
 }
 
 function readMetaData(htmlFilePath) {
@@ -142,7 +163,7 @@ function scanPanoDir(dir) {
     if (fs.existsSync(htmlFilePath)) {
       const htmlData = readHtmlMetaData(htmlFilePath);
       const descData = readDescriptionData(
-          path.resolve(dir, 'pano.description.json'))
+        path.resolve(dir, 'pano.description.json'))
       let link = path.posix.relative(publicPath, dir);
       const panoItem = {
         preview: htmlData.preview,
@@ -163,7 +184,7 @@ function scanPanoDir(dir) {
         const scaled = downscale(path.join(dir, preview), height);
         if (scaled) {
           panoItem['scaledPreviewLink' + height] = path.posix.join(link,
-              scaled);
+            scaled);
         }
       }
 
@@ -181,7 +202,9 @@ function scanPanoDir(dir) {
  * @returns {{preview: *, alt, link: string, description: never, title: never, tags: []}[]|*[]}
  */
 function scanDir(dir) {
-  debug('scanDir', dir)
+  debug('scanDir', dir);
+
+  let result = [];
   const fileNames = fs.readdirSync(dir);
 
   // is Leaf -> stop
@@ -191,7 +214,6 @@ function scanDir(dir) {
     return panoItem ? [panoItem] : [];
   }
 
-  let result = [];
   for (let fileName of fileNames) {
     const filePath = path.posix.join(dir, fileName);
     let stat = fs.lstatSync(filePath);

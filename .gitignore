@@ -1,6 +1,7 @@
 /.idea
 /node_modules
 /public
+/cache
 *.log
 server.env
 /dist
